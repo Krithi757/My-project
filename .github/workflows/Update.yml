@@ -10,35 +10,18 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-        - StandaloneWindows # Build a Windows standalone
-        - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - Android # Build an Android .apk standalone app.
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true  # ✅ Ensure LFS is enabled
+          lfs: true
 
-      - name: Fetch LFS files  # ✅ Explicitly pull LFS content
-        run: git lfs pull
-
-      # Debugging step (remove if unnecessary)
-      - name: List tracked LFS files
-        run: git lfs ls-files
-
-      # Install FFmpeg (NEW)
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-
-      # Verify FFmpeg installation
-      - name: Check FFmpeg Version
-        run: ffmpeg -version
-
-      # Temporarily disable caching to debug missing assets
-      # - uses: actions/cache@v4  # ❌ Commented out for testing
-      #   with:
-      #     path: Library
-      #     key: Library-${{ matrix.targetPlatform }}
-      #     restore-keys: Library-
+      - uses: actions/cache@v4  # ✅ Updated to v4
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
 
       - if: ${{ matrix.targetPlatform == 'Android' }}  # ✅ Fixed condition
         uses: jlumbroso/free-disk-space@v1.3.1
